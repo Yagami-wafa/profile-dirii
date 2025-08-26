@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: black;
+
+        }
+        .navbar {
+            align-self: flex-end;
+            padding: 30px;
+            display: flex;
+            gap: 25px;
+        }
+
+        .navbar a {
+            text-decoration: none;
+            color: #bda8a8;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 16px;
+            letter-spacing: 1px;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            color: #ffffff;
+        }
+
+        .subtitle {
+            font-size: 36px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sitting-container {
+            position: relative;
+            margin-top: auto;
+            padding-bottom: 80px;
+            text-align: center;
+        }
+
+        .name-text {
+            font-size: 200px;
+            font-weight: 1000;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            color: #ffffff;
+            position: relative;
+            z-index: 1;
+        }
+
+        .person-image {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            object-fit: cover;
+            bottom: 150px;
+            left: 75%;
+            transform: translateX(-50%);
+            z-index: 5;
+        }
+        .ch-image {
+            position: absolute;
+            width: 250px;
+        
+            height: 500px;
+            bottom: 100px;
+            left: 20%;
+            transform: translateX(-100%);
+            z-index: 5;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="index2.html">About</a>
+        <a href="#">Service</a>
+        <a href="#">Contact</a>
+    </div>
+
+    <div class="main-content">
+        <div class="subtitle">Programer</div>
+        <div class="subtitle">Ganteng</div>
+        <div class="subtitle">Kece</div>
+        <div class="subtitle">Smart People</div>
+    </div>
+
+    <div class="sitting-container">
+        <img src="/img/pose-duduk.png" alt="Person" class="person-image">
+        <img src="/img/ch-sword.png" alt="Person" class="ch-image">
+        <div class="name-text">`HSAN WAFA</div>
+    </div>
+    
+</body>
+</html>

@@ -1,0 +1,101 @@
+
+body {
+  background: #1a0033;
+  overflow: hidden;
+  position: relative;
+}
+
+.ball {
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 70%;
+  left: 50%;
+  transform: translate(-50%, 50%);
+  animation: bounce 2s ease-out, grow 1.5s 2s forwards;
+  z-index: 1;
+}
+
+@keyframes bounce {
+  0% { transform: translate(-50%, 100%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.2); }
+  100% { transform: translate(-50%, 0%) scale(1); }
+}
+
+@keyframes grow {
+  0% { width: 20px; height: 20px; }
+  100% {
+    width: 200vw;
+    height: 200vh;
+    border-radius: 0;
+    background: linear-gradient(to bottom right, #32005e, #5e00a2);
+  }
+}
+
+.planet {
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, #000, #111);
+  position: absolute;
+  opacity: 0;
+  box-shadow: 0 0 60px 20px rgba(255, 255, 255, 0.1); /* efek cahaya di tepi */
+  filter: drop-shadow(0 0 40px #ffffff22); /* tambahan glow */
+  z-index: 2;
+}
+
+@keyframes movePlanetLeft {
+  0% {
+    bottom: -700px;
+    left: -700px;
+    opacity: 0;
+  }
+  100% {
+    bottom: -1200px;
+    left: -300px;
+    opacity: 1;
+  }
+}
+
+@keyframes movePlanetRight {
+  0% {
+    top: -700px;
+    right: -700px;
+    opacity: 0;
+  }
+  100% {
+    top: -300px;
+    right: -300px;
+    opacity: 1;
+  }
+}
+
+
+.planet-left {
+  animation: movePlanetLeft 2s 3.5s ease-out forwards;
+}
+
+.planet-right {
+  animation: movePlanetRight 2s 3.5s ease-out forwards;
+}
+
+.nav {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  gap: 20px;
+  opacity: 0;
+  animation: fadeIn 1s 5.5s forwards;
+}
+.nav i {
+  font-size: 24px;
+  cursor: pointer;
+  color: white;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}

@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatApp - Pesan Instan</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .app-container {
+            width: 95%;
+            max-width: 1400px;
+            height: 90vh;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            display: flex;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 350px;
+            background: #f8f9fa;
+            border-right: 1px solid #e9ecef;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: #4f46e5;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .header-actions button {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .header-actions button:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .search-container {
+            padding: 20px;
+            background: white;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+
+        .chat-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 0;
+        }
+
+        .chat-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f1f3f4;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .chat-item:hover {
+            background: #f8f9fa;
+        }
+
+        .chat-item.active {
+            background: #e8f2ff;
+            border-right: 3px solid #4f46e5;
+        }
+
+        .chat-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            position: relative;
+        }
+
+        .online-indicator {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 14px;
+            height: 14px;
+            background: #10b981;
+            border: 2px solid white;
+            border-radius: 50%;
+        }
+
+        .chat-info {
+            flex: 1;
+        }
+
+        .chat-name {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+
+        .chat-preview {
+            font-size: 13px;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .chat-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 5px;
+        }
+
+        .chat-time {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .unread-badge {
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #ffffff;
+        }
+
+        .chat-header {
+            padding: 15px 20px;
+            background: #4f46e5;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-header-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .chat-header-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .chat-header-details h3 {
+            font-size: 1.1rem;
+            margin-bottom: 2px;
+        }
+
+        .chat-header-details p {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .chat-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-actions button {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .chat-actions button:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: linear-gradient(to bottom, #f8f9fa, #ffffff);
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+        }
+
+        .message.sent {
+            flex-direction: row-reverse;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            position: relative;
+            animation: messageSlide 0.3s ease-out;
+        }
+
+        .message.received .message-bubble {
+            background: #e5e7eb;
+            color: #1f2937;
+        }
+
+        .message.sent .message-bubble {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .message-content {
+            margin-bottom: 4px;
+        }
+
+        .message-time {
+            font-size: 11px;
+            opacity: 0.7;
+            text-align: right;
+        }
+
+        .message.received .message-time {
+            text-align: left;
+        }
+
+        .message-image {
+            width: 200px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 5px;
+        }
+
+        .message-file {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 5px;
+        }
+
+        .input-container {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .input-actions button {
+            background: #f3f4f6;
+            border: none;
+            color: #6b7280;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .input-actions button:hover {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .input-actions button.recording {
+            background: #ef4444;
+            color: white;
+            animation: pulse 1s infinite;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 14px;
+            resize: none;
+            transition: all 0.3s;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+
+        .send-button {
+            background: #4f46e5;
+            border: none;
+            color: white;
+            padding: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .send-button:hover {
+            background: #4338ca;
+        }
+
+        .send-button:disabled {
+            background: #d1d5db;
+            cursor: not-allowed;
+        }
+
+        .emoji-picker {
+            position: absolute;
+            bottom: 80px;
+            right: 20px;
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 15px;
+            padding: 15px;
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .emoji {
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .emoji:hover {
+            background: #f3f4f6;
+        }
+
+        .call-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1f2937, #374151);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            z-index: 2000;
+        }
+
+        .call-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .call-info h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .call-status {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-bottom: 40px;
+        }
+
+        .call-controls {
+            display: flex;
+            gap: 20px;
+        }
+
+        .call-controls button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .call-controls .end-call {
+            background: #ef4444;
+        }
+
+        .call-controls .end-call:hover {
+            background: #dc2626;
+        }
+
+        .call-controls .mute-call {
+            background: #6b7280;
+        }
+
+        .call-controls .mute-call:hover {
+            background: #4b5563;
+        }
+
+        .no-chat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #6b7280;
+        }
+
+        .no-chat-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 10px 16px;
+            background: #e5e7eb;
+            border-radius: 18px;
+            margin-bottom: 15px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #6b7280;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                width: 100%;
+                height: 100vh;
+                border-radius: 0;
+            }
+            
+            .sidebar {
+                width: 100%;
+                position: absolute;
+                z-index: 1000;
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1>💬 ChatApp</h1>
+                <div class="header-actions">
+                    <button onclick="showNewChat()" title="Chat Baru">➕</button>
+                    <button onclick="showSettings()" title="Pengaturan">⚙️</button>
+                </div>
+            </div>
+            
+            <div class="search-container">
+                <input type="text" class="search-box" placeholder="Cari kontak atau pesan..." id="searchInput" oninput="filterChats()">
+            </div>
+            
+            <div class="chat-list" id="chatList">
+                <!-- Chat items will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="chat-main" id="chatMain">
+            <div class="no-chat" id="noChat">
+                <div class="no-chat-icon">💬</div>
+                <h2>Selamat datang di ChatApp</h2>
+                <p>Pilih chat untuk mulai berkirim pesan</p>
+            </div>
+            
+            <div class="chat-header" id="chatHeader" style="display: none;">
+                <div class="chat-header-info">
+                    <button class="chat-header-avatar" onclick="toggleSidebar()">←</button>
+                    <div class="chat-header-avatar" id="headerAvatar">👤</div>
+                    <div class="chat-header-details">
+                        <h3 id="headerName">Nama Kontak</h3>
+                        <p id="headerStatus">terakhir dilihat 2 menit yang lalu</p>
+                    </div>
+                </div>
+                <div class="chat-actions">
+                    <button onclick="startCall('voice')" title="Panggilan Suara">📞</button>
+                    <button onclick="startCall('video')" title="Panggilan Video">📹</button>
+                    <button onclick="showChatInfo()" title="Info">ℹ️</button>
+                </div>
+            </div>
+            
+            <div class="messages-container" id="messagesContainer" style="display: none;">
+                <!-- Messages will be populated by JavaScript -->
+            </div>
+            
+            <div class="input-container" id="inputContainer" style="display: none;">
+                <div class="input-actions">
+                    <button onclick="attachFile('image')" title="Gambar">📷</button>
+                    <button onclick="attachFile('video')" title="Video">🎥</button>
+                    <button onclick="attachFile('document')" title="Dokumen">📄</button>
+                    <button onclick="toggleVoiceRecord()" title="Pesan Suara" id="voiceBtn">🎤</button>
+                    <button onclick="toggleEmoji()" title="Emoji">😊</button>
+                </div>
+                <textarea class="message-input" id="messageInput" placeholder="Ketik pesan..." rows="1" onkeypress="handleKeyPress(event)" oninput="adjustTextareaHeight()"></textarea>
+                <button class="send-button" onclick="sendMessage()" id="sendBtn">➤</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emoji Picker -->
+    <div class="emoji-picker" id="emojiPicker" style="display: none;">
+        <!-- Emojis will be populated by JavaScript -->
+    </div>
+
+    <!-- Call Screen -->
+    <div class="call-screen" id="callScreen" style="display: none;">
+        <div class="call-avatar" id="callAvatar">👤</div>
+        <div class="call-info">
+            <h2 id="callName">Nama Kontak</h2>
+            <div class="call-status" id="callStatus">Menghubungi...</div>
+        </div>
+        <div class="call-controls">
+            <button class="mute-call" onclick="toggleMute()" id="muteBtn">🔇</button>
+            <button class="end-call" onclick="endCall()">📞</button>
+            <button class="mute-call" onclick="toggleCamera()" id="cameraBtn" style="display: none;">📹</button>
+        </div>
+    </div>
+
+    <script>
+        // Sample data
+        let chats = [
+            {
+                id: 1,
+                name: 'Sarah Johnson',
+                avatar: '👩‍💼',
+                status: 'online',
+                lastSeen: 'online',
+                messages: [
+                    { id: 1, text: 'Halo! Bagaimana kabar proyek hari ini?', sender: 'other', timestamp: '14:30', type: 'text' },
+                    { id: 2, text: 'Semua berjalan lancar, terima kasih!', sender: 'me', timestamp: '14:32', type: 'text' },
+                    { id: 3, text: 'Bagus! Kita meeting jam 3 ya', sender: 'other', timestamp: '14:35', type: 'text' }
+                ],
+                unreadCount: 1
+            },
+            {
+                id: 2,
+                name: 'Tim Developer',
+                avatar: '👥',
+                status: 'offline',
+                lastSeen: 'terakhir dilihat 1 jam yang lalu',
+                messages: [
+                    { id: 1, text: 'Meeting dimulai dalam 10 menit', sender: 'other', timestamp: '13:45', type: 'text' },
+                    { id: 2, text: 'Siap! Sudah join di link Zoom', sender: 'me', timestamp: '13:46', type: 'text' }
+                ],
+                unreadCount: 0
+            },
+            {
+                id: 3,
+                name: 'Alex Chen',
+                avatar: '👨‍💻',
+                status: 'online',
+                lastSeen: 'online',
+                messages: [
+                    { id: 1, text: 'Lihat hasil desain yang baru ini', sender: 'other', timestamp: '12:15', type: 'text' },
+                    { id: 2, text: 'Wah keren banget! 🔥', sender: 'me', timestamp: '12:16', type: 'text' },
+                    { id: 3, text: 'Gambar: design-preview.jpg', sender: 'other', timestamp: '12:20', type: 'image' }
+                ],
+                unreadCount: 2
+            },
+            {
+                id: 4,
+                name: 'Maria Silva',
+                avatar: '👩‍🎨',
+                status: 'offline',
+                lastSeen: 'terakhir dilihat 30 menit yang lalu',
+                messages: [
+                    { id: 1, text: 'Hei! Sudah cek email ku?', sender: 'other', timestamp: '11:30', type: 'text' },
+                    { id: 2, text: 'Sudah, tapi belum sempat balas', sender: 'me', timestamp: '11:32', type: 'text' },
+                    { id: 3, text: 'Oke, tidak masalah. Nanti saja', sender: 'other', timestamp: '11:35', type: 'text' }
+                ],
+                unreadCount: 0
+            }
+        ];
+
+        let currentChat = null;
+        let isRecording = false;
+        let callTimer = null;
+        let callDuration = 0;
+
+        // Initialize app
+        function init() {
+            renderChatList();
+            setupEmojis();
+            setInterval(updateTime, 1000);
+        }
+
+        // Render chat list
+        function renderChatList() {
+            const chatList = document.getElementById('chatList');
+            chatList.innerHTML = '';
+            
+            chats.forEach(chat => {
+                const lastMessage = chat.messages[chat.messages.length - 1];
+                const chatItem = document.createElement('div');
+                chatItem.className = `chat-item ${currentChat && currentChat.id === chat.id ? 'active' : ''}`;
+                chatItem.onclick = () => selectChat(chat.id);
+                
+                chatItem.innerHTML = `
+                    <div class="chat-avatar">
+                        ${chat.avatar}
+                        ${chat.status === 'online' ? '<div class="online-indicator"></div>' : ''}
+                    </div>
+                    <div class="chat-info">
+                        <div class="chat-name">${chat.name}</div>
+                        <div class="chat-preview">
+                            ${lastMessage.sender === 'me' ? '✓ ' : ''}
+                            ${lastMessage.text}
+                        </div>
+                    </div>
+                    <div class="chat-meta">
+                        <div class="chat-time">${lastMessage.timestamp}</div>
+                        ${chat.unreadCount > 0 ? `<div class="unread-badge">${chat.unreadCount}</div>` : ''}
+                    </div>
+                `;
+                
+                chatList.appendChild(chatItem);
+            });
+        }
+
+        // Select chat
+        function selectChat(chatId) {
+            currentChat = chats.find(chat => chat.id === chatId);
+            if (currentChat) {
+                currentChat.unreadCount = 0;
+                showChatArea();
+                renderMessages();
+                renderChatList();
+            }
+        }
+
+        // Show chat area
+        function showChatArea() {
+            document.getElementById('noChat').style.display = 'none';
+            document.getElementById('chatHeader').style.display = 'flex';
+            document.getElementById('messagesContainer').style.display = 'block';
+            document.getElementById('inputContainer').style.display = 'flex';
+            
+            document.getElementById('headerAvatar').textContent = currentChat.avatar;
+            document.getElementById('headerName').textContent = currentChat.name;
+            document.getElementById('headerStatus').textContent = currentChat.lastSeen;
+        }
+
+        // Render messages
+        function renderMessages() {
+            const container = document.getElementById('messagesContainer');
+            container.innerHTML = '';
+            
+            currentChat.messages.forEach(message => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${message.sender === 'me' ? 'sent' : 'received'}`;
+                
+                let messageContent = '';
+                if (message.type === 'image') {
+                    messageContent = `
+                        <img src="https://via.placeholder.com/200x150/4F46E5/white?text=Gambar" alt="Gambar" class="message-image">
+                        <div class="message-content">${message.text}</div>
+                    `;
+                } else if (message.type === 'file') {
+                    messageContent = `
+                        <div class="message-file">
+                            <div>📄</div>
+                            <div>${message.text}</div>
+                        </div>
+                    `;
+                } else if (message.type === 'voice') {
+                    messageContent = `
+                        <div class="message-file">
+                            <div>🎤</div>
+                            <div>${message.text}</div>
+                        </div>
+                    `;
+                } else {
+                    messageContent = `<div class="message-content">${message.text}</div>`;
+                }
+                
+                messageDiv.innerHTML = `
+                    <div class="message-bubble">
+                        ${messageContent}
+                        <div class="message-time">${message.timestamp}</div>
+                    </div>
+                `;
+                
+                container.appendChild(messageDiv);
+            });
+            
+            // Show typing indicator occasionally
+            if (Math.random() > 0.7) {
+                setTimeout(() => showTypingIndicator(), 1000);
+            }
+            
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Show typing indicator
+        function showTypingIndicator() {
+            const container = document.getElementById('messagesContainer');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'typing-indicator';
+            typingDiv.innerHTML = `
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <span style="margin-left: 10px;">sedang mengetik...</span>
+            `;
+            container.appendChild(typingDiv);
+            container.scrollTop = container.scrollHeight;
+            
+            setTimeout(() => {
+                typingDiv.remove();
+            }, 3000);
+        }
+
+        // Send message
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (message && currentChat) {
+                const newMessage = {
+                    id: Date.now(),
+                    text: message,
+                    sender: 'me',
+                    timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+                    type: 'text'
+                };
+                
+                currentChat.messages.push(newMessage);
+                input.value = '';
+                adjustTextareaHeight();
+                renderMessages();
+                renderChatList();
+                
+                // Simulate reply
+                setTimeout(() => {
+                    const replies = [
+                        'Baik, terima kasih!',
+                        'Oke, mengerti 👍',
+                        'Siap!',
+                        'Baik, nanti saya coba',
+                        'Terima kasih infonya'
+                    ];
+                    const randomReply = replies[Math.floor(Math.random() * replies.length)];
+                    
+                    const replyMessage = {
+                        id: Date.now(),
+                        text: randomReply,
+                        sender: 'other',
+                        timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+                        type: 'text'
+                    };
+                    
+                    currentChat.messages.push(replyMessage);
+                    renderMessages();
+                    renderChatList();
+                }, 2000);
+            }
+        }
+
+        // Handle key press
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        // Adjust textarea height
+        function adjustTextareaHeight() {
+            const textarea = document.getElementById('messageInput');
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 100) + 'px';
+        }
+
+        // Attach file
+        function attachFile(type) {
+            if (!currentChat) return;
+            
+            const fileTypes = {
+                image: { text: 'Gambar: photo.jpg', icon: '📷' },
+                video: { text: 'Video: video.mp4', icon: '🎥' },
+                document: { text: 'Dokumen: document.pdf', icon: '📄' }
+            };
+            
+            const fileType = fileTypes[type];
+            const newMessage = {
+                id: Date.now(),
+                text: fileType.text,
+                sender: 'me',
+                timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+                type: type
+            };
+            
+            currentChat.messages.push(newMessage);
+            renderMessages();
+            renderChatList();
+        }
+
+        // Toggle voice recording
+        function toggleVoiceRecord() {
+            const voiceBtn = document.getElementById('voiceBtn');
+            
+            if (!isRecording) {
+                isRecording = true;
+                voiceBtn.textContent = '⏹️';
+                voiceBtn.classList.add('recording');
+                
+                                    setTimeout(() => {
+                    isRecording = false;
+                    voiceBtn.textContent = '🎤';
+                    voiceBtn.classList.remove('recording');
+                    
+                    if (currentChat) {
+                        const newMessage = {
+                            id: Date.now(),
+                            text: 'Pesan suara (0:05)',
+                            sender: 'me',
+                            timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+                            type: 'voice'
+                        };
+                        
+                        currentChat.messages.push(newMessage);
+                        renderMessages();
+                        renderChatList();
+                    }
+                }, 3000);
+            }
+        }
+
+        // Setup emojis
+        function setupEmojis() {
+            const emojiPicker = document.getElementById('emojiPicker');
+            const emojis = ['😀', '😂', '😍', '🤔', '👍', '👎', '❤️', '🔥', '💯', '🎉', '😢', '😡', '🤝', '👏', '🙌', '✌️', '🤞', '🤟', '💪', '👌', '🤌', '🤏', '👋', '🤚'];
+            
+            emojis.forEach(emoji => {
+                const emojiSpan = document.createElement('span');
+                emojiSpan.className = 'emoji';
+                emojiSpan.textContent = emoji;
+                emojiSpan.onclick = () => insertEmoji(emoji);
+                emojiPicker.appendChild(emojiSpan);
+            });
+        }
+
+        // Toggle emoji picker
+        function toggleEmoji() {
+            const emojiPicker = document.getElementById('emojiPicker');
+            emojiPicker.style.display = emojiPicker.style.display === 'none' ? 'grid' : 'none';
+        }
+
+        // Insert emoji
+        function insertEmoji(emoji) {
+            const input = document.getElementById('messageInput');
+            const cursorPos = input.selectionStart;
+            const text = input.value;
+            input.value = text.slice(0, cursorPos) + emoji + text.slice(cursorPos);
+            input.focus();
+            input.setSelectionRange(cursorPos + emoji.length, cursorPos + emoji.length);
+            toggleEmoji();
+        }
+
+        // Start call
+        function startCall(type) {
+            if (!currentChat) return;
+            
+            const callScreen = document.getElementById('callScreen');
+            const callAvatar = document.getElementById('callAvatar');
+            const callName = document.getElementById('callName');
+            const callStatus = document.getElementById('callStatus');
+            const cameraBtn = document.getElementById('cameraBtn');
+            
+            callAvatar.textContent = currentChat.avatar;
+            callName.textContent = currentChat.name;
+            callStatus.textContent = type === 'voice' ? 'Panggilan suara...' : 'Panggilan video...';
+            cameraBtn.style.display = type === 'video' ? 'block' : 'none';
+            
+            callScreen.style.display = 'flex';
+            callDuration = 0;
+            
+            // Simulate call connection
+            setTimeout(() => {
+                callStatus.textContent = 'Terhubung';
+                callTimer = setInterval(() => {
+                    callDuration++;
+                    const minutes = Math.floor(callDuration / 60);
+                    const seconds = callDuration % 60;
+                    callStatus.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }, 1000);
+            }, 3000);
+        }
+
+        // End call
+        function endCall() {
+            const callScreen = document.getElementById('callScreen');
+            callScreen.style.display = 'none';
+            
+            if (callTimer) {
+                clearInterval(callTimer);
+                callTimer = null;
+            }
+            
+            // Add call message to chat
+            if (currentChat) {
+                const newMessage = {
+                    id: Date.now(),
+                    text: `Panggilan berakhir (${Math.floor(callDuration / 60)}:${(callDuration % 60).toString().padStart(2, '0')})`,
+                    sender: 'me',
+                    timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+                    type: 'call'
+                };
+                
+                currentChat.messages.push(newMessage);
+                renderMessages();
+                renderChatList();
+            }
+        }
+
+        // Toggle mute
+        function toggleMute() {
+            const muteBtn = document.getElementById('muteBtn');
+            const isMuted = muteBtn.textContent === '🔇';
+            muteBtn.textContent = isMuted ? '🔊' : '🔇';
+        }
+
+        // Toggle camera
+        function toggleCamera() {
+            const cameraBtn = document.getElementById('cameraBtn');
+            const isOn = cameraBtn.textContent === '📹';
+            cameraBtn.textContent = isOn ? '📷' : '📹';
+        }
+
+        // Filter chats
+        function filterChats() {
+            const searchInput = document.getElementById('searchInput');
+            const query = searchInput.value.toLowerCase();
+            const chatItems = document.querySelectorAll('.chat-item');
+            
+            chatItems.forEach(item => {
+                const name = item.querySelector('.chat-name').textContent.toLowerCase();
+                const preview = item.querySelector('.chat-preview').textContent.toLowerCase();
+                
+                if (name.includes(query) || preview.includes(query)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Show new chat
+        function showNewChat() {
+            const newChatId = Date.now();
+            const newChat = {
+                id: newChatId,
+                name: 'Kontak Baru',
+                avatar: '👤',
+                status: 'offline',
+                lastSeen: 'baru saja',
+                messages: [
+                    {
+                        id: 1,
+                        text: 'Halo! Senang berkenalan dengan Anda 👋',
+                        sender: 'other',
+                        timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+                        type: 'text'
+                    }
+                ],
+                unreadCount: 1
+            };
+            
+            chats.unshift(newChat);
+            renderChatList();
+            selectChat(newChatId);
+        }
+
+        // Show settings
+        function showSettings() {
+            alert('Pengaturan:\n\n• Notifikasi: Aktif\n• Tema: Terang\n• Bahasa: Indonesia\n• Backup: Otomatis\n• Privasi: Terakhir dilihat untuk semua');
+        }
+
+        // Show chat info
+        function showChatInfo() {
+            if (currentChat) {
+                const messageCount = currentChat.messages.length;
+                const mediaCount = currentChat.messages.filter(m => m.type === 'image' || m.type === 'video').length;
+                
+                alert(`Info Chat:\n\n• Nama: ${currentChat.name}\n• Status: ${currentChat.status}\n• Total pesan: ${messageCount}\n• Media dibagikan: ${mediaCount}\n• Terakhir dilihat: ${currentChat.lastSeen}`);
+            }
+        }
+
+        // Toggle sidebar (mobile)
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        // Update time
+        function updateTime() {
+            const now = new Date();
+            const timeElements = document.querySelectorAll('.chat-time');
+            
+            // Update timestamps occasionally
+            if (now.getSeconds() % 30 === 0) {
+                chats.forEach(chat => {
+                    if (chat.messages.length > 0) {
+                        const lastMessage = chat.messages[chat.messages.length - 1];
+                        const messageTime = new Date();
+                        messageTime.setMinutes(messageTime.getMinutes() - Math.floor(Math.random() * 60));
+                        lastMessage.timestamp = messageTime.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                    }
+                });
+                
+                if (document.getElementById('chatList').innerHTML) {
+                    renderChatList();
+                }
+            }
+        }
+
+        // Handle clicks outside emoji picker
+        document.addEventListener('click', (event) => {
+            const emojiPicker = document.getElementById('emojiPicker');
+            const emojiButton = event.target.closest('[onclick*="toggleEmoji"]');
+            
+            if (!emojiPicker.contains(event.target) && !emojiButton) {
+                emojiPicker.style.display = 'none';
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                document.getElementById('sidebar').classList.remove('active');
+            }
+        });
+
+        // Simulate online status changes
+        setInterval(() => {
+            chats.forEach(chat => {
+                if (Math.random() > 0.8) {
+                    chat.status = chat.status === 'online' ? 'offline' : 'online';
+                    chat.lastSeen = chat.status === 'online' ? 'online' : `terakhir dilihat ${Math.floor(Math.random() * 60)} menit yang lalu`;
+                }
+            });
+            
+            if (currentChat) {
+                document.getElementById('headerStatus').textContent = currentChat.lastSeen;
+            }
+            
+            renderChatList();
+        }, 30000);
+
+        // Add message reactions
+        function addReaction(messageId, emoji) {
+            if (!currentChat) return;
+            
+            const message = currentChat.messages.find(m => m.id === messageId);
+            if (message) {
+                if (!message.reactions) {
+                    message.reactions = {};
+                }
+                
+                if (message.reactions[emoji]) {
+                    message.reactions[emoji]++;
+                } else {
+                    message.reactions[emoji] = 1;
+                }
+                
+                renderMessages();
+            }
+        }
+
+        // Simulate incoming messages
+        setInterval(() => {
+            if (Math.random() > 0.95 && chats.length > 0) {
+                const randomChat = chats[Math.floor(Math.random() * chats.length)];
+                const incomingMessages = [
+                    'Halo! Apa kabar?',
+                    'Sudah makan siang?',
+                    'Jangan lupa meeting nanti',
+                    'Terima kasih ya!',
+                    'Oke, sampai jumpa!',
+                    'Bagaimana proyeknya?',
+                    'Selamat pagi! 🌅',
+                    'Selamat malam 🌙',
+                    'Semangat kerja! 💪'
+                ];
+                
+                const randomMessage = incomingMessages[Math.floor(Math.random() * incomingMessages.length)];
+                
+                const newMessage = {
+                    id: Date.now(),
+                    text: randomMessage,
+                    sender: 'other',
+                    timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+                    type: 'text'
+                };
+                
+                randomChat.messages.push(newMessage);
+                randomChat.unreadCount++;
+                
+                renderChatList();
+                
+                if (currentChat && currentChat.id === randomChat.id) {
+                    renderMessages();
+                    randomChat.unreadCount = 0;
+                }
+                
+                // Show notification
+                if ('Notification' in window && Notification.permission === 'granted') {
+                    new Notification(`Pesan dari ${randomChat.name}`, {
+                        body: randomMessage,
+                        icon: '💬'
+                    });
+                }
+            }
+        }, 10000);
+
+        // Request notification permission
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+
+        // Initialize app when page loads
+        document.addEventListener('DOMContentLoaded', init);
+
+        // Add some sample interactions
+        setTimeout(() => {
+            const welcomeChat = {
+                id: 0,
+                name: 'ChatApp Bot',
+                avatar: '🤖',
+                status: 'online',
+                lastSeen: 'online',
+                messages: [
+                    {
+                        id: 1,
+                        text: 'Selamat datang di ChatApp! 👋',
+                        sender: 'other',
+                        timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+                        type: 'text'
+                    },
+                    {
+                        id: 2,
+                        text: 'Fitur yang tersedia:\n• Pesan teks\n• Pesan suara\n• Kirim gambar & video\n• Kirim dokumen\n• Panggilan suara & video\n• Emoji\n• Status online',
+                        sender: 'other',
+                        timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+                        type: 'text'
+                    },
+                    {
+                        id: 3,
+                        text: 'Silakan pilih chat untuk memulai percakapan!',
+                        sender: 'other',
+                        timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+                        type: 'text'
+                    }
+                ],
+                unreadCount: 3
+            };
+            
+            chats.unshift(welcomeChat);
+            renderChatList();
+        }, 1000);
+    </script>
+</body>
+</html>
